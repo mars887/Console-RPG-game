@@ -1,4 +1,4 @@
-package Entity;
+package Game.Entity;
 
 public class Monster extends Entity implements Fighter {
 
@@ -7,7 +7,7 @@ public class Monster extends Entity implements Fighter {
     }
 
     @Override
-    public boolean attack(Entity entity) {
-        return false;
+    public int attack(Entity entity) {
+        return 0;
     }
 }

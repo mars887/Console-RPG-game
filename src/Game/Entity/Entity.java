@@ -1,4 +1,4 @@
-package Entity;
+package Game.Entity;
 
 public abstract class Entity {
 
@@ -22,6 +22,7 @@ public abstract class Entity {
     }
 
     // -------------------------------------------------------------------------------------    Setters
+
     public void setHealth(int health) {
         this.health = Math.min(health, maxHealth) < 0 ? 0 : health;
     }
@@ -36,5 +37,25 @@ public abstract class Entity {
 
     public void setExp(int exp) {
         this.exp = Math.max(exp, 0);
+    }
+
+    public int getMaxHealth() {
+        return maxHealth;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public int getStrength() {
+        return strength;
+    }
+
+    public float getDexterity() {
+        return dexterity;
+    }
+
+    public int getExp() {
+        return exp;
     }
 }

@@ -1,19 +1,25 @@
-package Entity;
+package Game.Entity;
+
+import Game.Entity.Items.Inventory;
 
 public class Player extends Entity implements Fighter {
 
     protected int level;           // level       x > 0
     protected int money;           // money       x > 0
 
+    public final Inventory inventory;
+
     // -------------------------------------------------------------------------------------    Constructors
+
     public Player(int maxHealth, int health, int strength, float dexterity, int level, int exp, int money) {
         super(maxHealth, health, strength, dexterity, exp);
         setLevel(level);
         expToLevel(false);
         setMoney(money);
+        inventory = new Inventory();
     }
 
-    // -------------------------------------------------------------------------------------    Setters
+    // -------------------------------------------------------------------------------------    Setters and Getters
 
     public void setLevel(int level) {
         this.level = Math.max(level, 0);
@@ -22,6 +28,16 @@ public class Player extends Entity implements Fighter {
     public void setMoney(int money) {
         this.money = Math.max(money, 0);
     }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public int getXpForNextLevel() { return (100 + this.level * 15) - exp; }
 
     // -------------------------------------------------------------------------------------    Functions
 
@@ -38,7 +54,7 @@ public class Player extends Entity implements Fighter {
     }
 
     @Override
-    public boolean attack(Entity entity) {
-        return false;
+    public int attack(Entity entity) {
+        return 0;
     }
 }
