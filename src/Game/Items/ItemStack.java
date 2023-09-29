@@ -1,4 +1,4 @@
-package Game.Entity.Items;
+package Game.Items;
 
 public class ItemStack {
     public final int MAX_STACK_SIZE;
@@ -7,7 +7,7 @@ public class ItemStack {
 
     public ItemStack(int quantity, ITEM_TYPE itemType) {
         this.itemType = itemType;
-        this.MAX_STACK_SIZE = itemType.getMaxStackSize();
+        this.MAX_STACK_SIZE = itemType.maxStackSize;
         this.quantity = Math.max(1, Math.min(quantity, MAX_STACK_SIZE));
     }
 

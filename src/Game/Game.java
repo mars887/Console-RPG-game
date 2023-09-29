@@ -1,15 +1,15 @@
 package Game;
 
-import Game.Entity.Items.ITEM_TYPE;
-import Game.Entity.Items.ItemStack;
+import Game.Items.ITEM_TYPE;
+import Game.Items.Inventory;
 import Game.Entity.Player;
+import Game.Rooms.FightSession;
 import Game.Rooms.Traider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
+import java.util.Random;
 
 public class Game extends Thread {
 
@@ -17,7 +17,6 @@ public class Game extends Thread {
     public boolean gameEnded = false;
 
     public Player player;
-    public String playerName;
 
     public Game() {
         player = new Player(100, 100, 10, 0.6f, 1, 0, 30);
@@ -31,10 +30,10 @@ public class Game extends Thread {
 
         System.out.print("Введите имя персонажа - ");   // ----------------------------------------------- create player
         try {
-            playerName = scan.readLine();
+            player.setPlayerName(scan.readLine());
         } catch (IOException e) {
             System.out.println("возникла ошибка поэтому персонаж теперь Вася\n\n\n");
-            playerName = "Вася";
+            player.setPlayerName("Вася");
         }
 
 
@@ -54,26 +53,15 @@ public class Game extends Thread {
                     }
                     break;
                 case 2:
-                    System.out.println(MESSAGES.DANGEON_NOT_AVAILABLE);
+                    FightSession fightSession = new FightSession(player);
+                    fightSession.start();
+                    try {
+                        fightSession.join();
+                    } catch (InterruptedException e) {
+                    }
                     break;
                 case 3:
-                    System.out.println("В инвентаре лежит...");
-                    Stream<ItemStack> list = player.inventory.getStream();
-                    AtomicInteger fullCost = new AtomicInteger();
-
-                    list.peek(x -> fullCost.addAndGet(x.getQuantity() * x.itemType.costSell))
-                            .forEach(x -> {
-                                System.out.print("   " + x.itemType.getRuName());
-                                countPrint(" ", 30 - x.itemType.getRuName().length());
-                                System.out.println("количество - " + x.getQuantity());
-                            });
-
-                    System.out.println("Общая стоимость инвентаря - " + fullCost + " монет");
-                    System.out.println("Монет имеется - " + player.getMoney());
-                    System.out.println("Уровень - " + player.getLevel());
-                    System.out.println("Опыт - " + player.getExp());
-                    System.out.println("Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
-                    System.out.println("\n");
+                    Inventory.printInventory(player);
                     break;
                 case 4:
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n--- ok ---\n\n\n\n\n\n\n\n\n");

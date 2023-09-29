@@ -1,6 +1,6 @@
 package Game;
 
-import Game.Entity.Items.ITEM_TYPE;
+import Game.Items.ITEM_TYPE;
 
 public abstract class MESSAGES {
     public static final String MENU_MESSAGE = """
@@ -29,5 +29,11 @@ public abstract class MESSAGES {
             "\n1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DEXTERITY_POTION) +
             "\n2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_15HP) +
             "\n3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_40HP) +
+            "\n4. Вернуться назад";
+
+    public static final String TRAIDER_BUYING_LIST = "Список товаров: " +
+            "\n1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.BONE) +
+            "\n2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.FABRIC) +
+            "\n3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DIAMOND) +
             "\n4. Вернуться назад";
 }

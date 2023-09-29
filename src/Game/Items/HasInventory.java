@@ -1,4 +1,4 @@
-package Game.Entity.Items;
+package Game.Items;
 
 public interface HasInventory {
     int add(ITEM_TYPE type, int quantity);

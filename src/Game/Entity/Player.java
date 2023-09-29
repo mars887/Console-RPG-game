@@ -1,11 +1,17 @@
 package Game.Entity;
 
-import Game.Entity.Items.Inventory;
+import Game.Items.ITEM_TYPE;
+import Game.Items.Inventory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class Player extends Entity implements Fighter {
 
     protected int level;           // level       x > 0
     protected int money;           // money       x > 0
+    public String playerName;
 
     public final Inventory inventory;
 
@@ -20,6 +26,10 @@ public class Player extends Entity implements Fighter {
     }
 
     // -------------------------------------------------------------------------------------    Setters and Getters
+
+    public void setPlayerName(String name) {
+        playerName = name;
+    }
 
     public void setLevel(int level) {
         this.level = Math.max(level, 0);
@@ -37,7 +47,9 @@ public class Player extends Entity implements Fighter {
         return money;
     }
 
-    public int getXpForNextLevel() { return (100 + this.level * 15) - exp; }
+    public int getXpForNextLevel() {
+        return (100 + this.level * 15) - exp;
+    }
 
     // -------------------------------------------------------------------------------------    Functions
 
@@ -53,8 +65,27 @@ public class Player extends Entity implements Fighter {
         }
     }
 
+    public void addExp(int quantity) {
+        if (quantity > 0) {
+            exp += quantity;
+            expToLevel(true);
+        }
+    }
+
     @Override
     public int attack(Entity entity) {
         return 0;
     }
+
+    public void lostInventory() {
+        System.out.println(playerName + " испугался и решил сбежать...");
+        System.out.println("Так бежал что из карманов всё повылетало...\n\n\n");
+        HashMap<ITEM_TYPE, Integer> map = inventory.getHashMap();
+        for(Map.Entry<ITEM_TYPE, Integer> entry : map.entrySet()) {
+            if(entry.getValue() > 2) {
+                inventory.remove(entry.getKey(), (int)(entry.getValue() * new Random().nextFloat(0.2f,0.4f)));
+            }
+        }
+    }
+
 }
