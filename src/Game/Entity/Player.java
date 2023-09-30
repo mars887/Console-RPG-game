@@ -2,14 +2,14 @@ package Game.Entity;
 
 import Game.Items.ITEM_TYPE;
 import Game.Items.Inventory;
+import org.w3c.dom.ls.LSOutput;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class Player extends Entity implements Fighter {
+public class Player extends Entity {
 
-    protected int level;           // level       x > 0
     protected int money;           // money       x > 0
     public String playerName;
 
@@ -72,20 +72,36 @@ public class Player extends Entity implements Fighter {
         }
     }
 
-    @Override
-    public int attack(Entity entity) {
-        return 0;
-    }
 
     public void lostInventory() {
-        System.out.println(playerName + " испугался и решил сбежать...");
-        System.out.println("Так бежал что из карманов всё повылетало...\n\n\n");
         HashMap<ITEM_TYPE, Integer> map = inventory.getHashMap();
-        for(Map.Entry<ITEM_TYPE, Integer> entry : map.entrySet()) {
-            if(entry.getValue() > 2) {
-                inventory.remove(entry.getKey(), (int)(entry.getValue() * new Random().nextFloat(0.2f,0.4f)));
+        for (Map.Entry<ITEM_TYPE, Integer> entry : map.entrySet()) {
+            if (entry.getValue() > 2) {
+                inventory.remove(entry.getKey(), (int) (entry.getValue() * new Random().nextFloat(0.2f, 0.4f)));
             }
         }
     }
 
+    public void usePotion(ITEM_TYPE item) {
+        switch (item) {
+            case DEXTERITY_POTION -> {
+                new Thread(() -> {
+                    float lastVal = dexterity;
+                    dexterity = (float) Math.sqrt(dexterity);
+                    try {
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                    }
+                    dexterity = lastVal;
+                }).start();
+                System.out.println("Зелье будет действовать ещё 1 минуту");
+            }
+            case HEALING_POTION_15HP -> System.out.println("Терерь у " + playerName + (health = Math.min(health + 15,maxHealth)) + " здоровья");
+            case HEALING_POTION_40HP -> System.out.println("Терерь у " + playerName + (health = Math.min(health + 40,maxHealth)) + " здоровья");
+        }
+    }
+
+    public void restoreHp() {
+        health = maxHealth;
+    }
 }

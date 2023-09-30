@@ -19,7 +19,7 @@ public class Game extends Thread {
     public Player player;
 
     public Game() {
-        player = new Player(100, 100, 10, 0.6f, 1, 0, 30);
+        player = new Player(100, 100, 20, 0.8f, 1, 0, 40);
         player.inventory.add(ITEM_TYPE.BONE, 37);
         player.inventory.add(ITEM_TYPE.HEALING_POTION_15HP, 1);
         player.inventory.add(ITEM_TYPE.FABRIC, 29);
@@ -28,7 +28,7 @@ public class Game extends Thread {
     @Override
     public void run() {
 
-        System.out.print("Введите имя персонажа - ");   // ----------------------------------------------- create player
+        System.out.print("\n\n\n\n\nВведите имя персонажа - ");   // ----------------------------------------------- create player
         try {
             player.setPlayerName(scan.readLine());
         } catch (IOException e) {
@@ -36,7 +36,7 @@ public class Game extends Thread {
             player.setPlayerName("Вася");
         }
 
-
+        System.out.println(MESSAGES.ENTERS_15);
         while (!gameEnded) {    // --------------------------------------------------------------------------- game loop
             System.out.println(MESSAGES.MENU_MESSAGE);
 
@@ -59,6 +59,7 @@ public class Game extends Thread {
                         fightSession.join();
                     } catch (InterruptedException e) {
                     }
+                    if (!fightSession.isWin) player.restoreHp();
                     break;
                 case 3:
                     Inventory.printInventory(player);
@@ -81,8 +82,10 @@ public class Game extends Thread {
                 input = Integer.parseInt(readScanner());
             } catch (IOException e) {
                 System.out.println("что-то не так...\nПопробуй заново\n\n\n");
+                continue;
             } catch (NumberFormatException e) {
                 System.out.println("это не число...\nПопробуй заново\n\n\n");
+                continue;
             }
             if (input >= a && input <= b) {
                 return input;

@@ -22,15 +22,19 @@ public class Traider extends Thread {
     @Override
     public void run() {
         boolean isTraiding = true;
-        System.out.println("\nИдём к торговцу...");
+        System.out.println("Идём к торговцу...");
         while (isTraiding) {
+            System.out.println(MESSAGES.ENTERS_5 + "\n\n\n");
             System.out.println(MESSAGES.TRAIDER_SELL_BUY);
 
             int input = readUserInput(1, 3);
             switch (input) {
                 case 1 -> traiderSelling();
                 case 2 -> traiderBuying();
-                case 3 -> isTraiding = false;
+                case 3 -> {
+                    System.out.println(MESSAGES.ENTERS_15);
+                    isTraiding = false;
+                }
             }
         }
     }
@@ -38,12 +42,15 @@ public class Traider extends Thread {
     private void traiderSelling() {
         boolean isSelling = true;
         while (isSelling) {
+            System.out.println(MESSAGES.ENTERS_10);
             System.out.println(MESSAGES.TRAIDER_SELLING_LIST);
-            System.out.println("Что покупаем?");
             int option = readUserInput(1, 4);
 
             ITEM_TYPE item = null;
-            if ((item = getItemById(option + 3)) == null) return;
+            if ((item = getItemById(option + 3)) == null) {
+                System.out.println(MESSAGES.ENTERS_10);
+                return;
+            }
 
             int playerMoney = player.getMoney();
             int oneCost = item.costSell;
@@ -78,26 +85,32 @@ public class Traider extends Thread {
             return;
         }
         int f = 1;
+        System.out.println(MESSAGES.ENTERS_10);
+        System.out.println("Торговец говорит:\n  Сегодня я скупаю только эти товары" + MESSAGES.ENTERS_5 + "\n\n");
         for (Map.Entry<ITEM_TYPE, Integer> item : types.entrySet()) {
             System.out.print((f++) + ". " + item.getKey().ruName);
             countPrint(" ", 30 - item.getKey().ruName.length());
             System.out.println("имеется - " + item.getValue() + "   (" + (item.getKey().costSell * item.getValue()) + " монет)");
         }
-        System.out.println("Что хотите продать");
-        int option = readUserInput(1, types.size());
+        System.out.println((types.size() + 1) + ". Назад");
+        int option = readUserInput(1, types.size() + 1);
+        if(option == types.size() + 1) {
+            System.out.println(MESSAGES.ENTERS_10);
+            return;
+        }
 
         Map.Entry<ITEM_TYPE, Integer> itemEntry = (Map.Entry<ITEM_TYPE, Integer>) types.entrySet().toArray()[option - 1];
         ITEM_TYPE item = itemEntry.getKey();
         int inInventory = itemEntry.getValue();
 
-        System.out.print("Вы можете продать от " + 1 + " до " + inInventory + " штук(и)\nСколько продаём? - ");
+        System.out.print("\nВы можете продать от " + 1 + " до " + inInventory + " штук(и)\nСколько продаём? - ");
         int quantity = readUserInput(1, inInventory);
-        System.out.println("Продаём...");
+        System.out.println(MESSAGES.ENTERS_5);
+        System.out.println("\n\n\nПродаём...");
 
         player.inventory.remove(item, quantity);
         player.setMoney(player.getMoney() + (quantity * item.costSell));
         player.addExp(quantity);
-        System.out.println("\n\n");
     }
 
     private ITEM_TYPE getItemById(int id) {

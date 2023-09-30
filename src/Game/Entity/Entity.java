@@ -1,11 +1,12 @@
 package Game.Entity;
 
-public abstract class Entity {
+public abstract class Entity implements Fighter {
 
     protected final int maxHealth; // max health  x > 0
     protected int health;          // health      x > 0 <= maxHealth
     protected int strength;        // strength    x > 0
     protected float dexterity;     // dexterity   0.0 > x < 1.0
+    protected int level;           // level       x >= 0
     protected int exp;             // exp         x > 0
 
     // -------------------------------------------------------------------------------------    Constructors
@@ -58,4 +59,5 @@ public abstract class Entity {
     public int getExp() {
         return exp;
     }
+
 }

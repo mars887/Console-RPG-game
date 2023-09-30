@@ -2,7 +2,9 @@ package Game.Entity;
 
 import Game.Items.ITEM_TYPE;
 
-public class Monster extends Entity implements Fighter {
+import java.util.Random;
+
+public class Monster extends Entity {
 
     public final String ruType;
     public final float playerDexterityChange;
@@ -10,16 +12,13 @@ public class Monster extends Entity implements Fighter {
     public final int itemCount;
 
 
-    public Monster(String ruType, int maxHealth, int strength, float dexterity,float playerDexterityChange, int exp,ITEM_TYPE dropItemType, int itemCount) {
+    public Monster(String ruType, int maxHealth, int strength, float dexterity,float playerDexterityChange, int exp,ITEM_TYPE dropItemType, int itemCount,int playerLevel) {
         super(maxHealth, strength, dexterity, exp);
         this.itemCount = itemCount;
         this.dropItemType = dropItemType;
         this.ruType = ruType;
         this.playerDexterityChange = playerDexterityChange;
+        this.level = playerLevel;
     }
 
-    @Override
-    public int attack(Entity entity) {
-        return 0;
-    }
 }

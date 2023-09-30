@@ -5,6 +5,8 @@ import Game.Entity.Player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -76,13 +78,23 @@ public class Inventory implements HasInventory {
     public HashMap<ITEM_TYPE, Integer> getHashMap() {
         HashMap<ITEM_TYPE, Integer> map = new HashMap<>();
         for (ItemStack item : items) {
-            if(map.containsKey(item.itemType)) {
+            if (map.containsKey(item.itemType)) {
                 map.put(item.itemType, map.get(item.itemType) + item.getQuantity());
             } else {
-                map.put(item.itemType,item.getQuantity());
+                map.put(item.itemType, item.getQuantity());
             }
         }
         return map;
+    }
+
+    public HashSet<ITEM_TYPE> getAvailablePotions() {
+        HashSet<ITEM_TYPE> set = new HashSet<>();
+        for (ItemStack item : items) {
+            if(item.itemType.isPotion) {
+                set.add(item.itemType);
+            }
+        }
+        return set;
     }
 
     public int getFreeSlots() {
@@ -104,9 +116,10 @@ public class Inventory implements HasInventory {
 
         System.out.println("Общая стоимость инвентаря - " + fullCost + " монет");
         System.out.println("Монет имеется - " + player.getMoney());
-        System.out.println("Уровень - " + player.getLevel());
-        System.out.println("Опыт - " + player.getExp());
-        System.out.println("Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
-        System.out.println("\n");
+        System.out.print("Уровень - " + player.getLevel());
+        System.out.print("       Опыт - " + player.getExp());
+        System.out.println("       Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
+        System.out.println("Здоровье - " + player.getHealth() + "  (Max - " + player.getMaxHealth() + ")");
+        System.out.println("\n\n");
     }
 }
