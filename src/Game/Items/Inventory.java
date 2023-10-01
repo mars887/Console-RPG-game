@@ -120,6 +120,6 @@ public class Inventory implements HasInventory {
         System.out.print("       Опыт - " + player.getExp());
         System.out.println("       Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
         System.out.println("Здоровье - " + player.getHealth() + "  (Max - " + player.getMaxHealth() + ")");
-        System.out.println("\n\n");
+        System.out.println("\n\n\n");
     }
 }

@@ -2,7 +2,7 @@ package Game.Entity;
 
 public abstract class Entity implements Fighter {
 
-    protected final int maxHealth; // max health  x > 0
+    protected int maxHealth; // max health  x > 0
     protected int health;          // health      x > 0 <= maxHealth
     protected int strength;        // strength    x > 0
     protected float dexterity;     // dexterity   0.0 > x < 1.0
@@ -19,7 +19,7 @@ public abstract class Entity implements Fighter {
     }
 
     public Entity(int maxHealth, int strength, float dexterity, int exp) {
-        this(maxHealth, maxHealth, strength, dexterity, 0);
+        this(maxHealth, maxHealth, strength, dexterity, exp);
     }
 
     // -------------------------------------------------------------------------------------    Setters

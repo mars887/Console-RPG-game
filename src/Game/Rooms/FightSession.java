@@ -16,7 +16,7 @@ import static Game.Game.readUserInput;
 public class FightSession extends Thread {
 
     public final Player player;
-    public final Monster monster;
+    public Monster monster;
 
     public boolean isWin = true;
 
@@ -35,8 +35,8 @@ public class FightSession extends Thread {
 
         while (isFighting) {
             System.out.println("Ваш враг - " + monster.ruType);
-            System.out.println(" его здоровье - " + monster.getHealth());
-            System.out.println(" а удары забирают по " + monster.getStrength() + " едениц здоровья");
+            System.out.println(" здоровье - " + monster.getHealth());
+            System.out.println(" сила -  " + monster.getStrength());
             System.out.println("\n1. Начать бой\n2. Сбежать");
             if (readUserInput(1, 2) == 1) { //---------------------------------
                 Random rand = new Random();
@@ -52,8 +52,10 @@ public class FightSession extends Thread {
                         System.out.println(monster.ruType + " в " + data[0] + " едениц");
                         if (data[2] == 1) {
                             System.out.println("Одерживая победу в этом бою");
+                            winBattle(player, monster);
                             isFighting = isFindNextFight();
                             if (!isFighting) break;
+                            monster = getRandomMonster(player.getLevel());
                         } else {
                             System.out.println("\nНо " + monster.ruType + " устоял на ногах");
                             System.out.println("И теперь удар наносит уже он...\n\n\n");
@@ -93,12 +95,13 @@ public class FightSession extends Thread {
                                             System.out.println(f.getAndIncrement() + ". " + item.ruName);
                                         });
                                         System.out.println((itemSet.size() + 1) + ". Назад");
-                                        int input2 = readUserInput(1, itemSet.size());
-                                        if(input2 == itemSet.size()) {
+                                        int input2 = readUserInput(1, itemSet.size() + 1);
+                                        if (input2 == itemSet.size() + 1) {
                                             break;
                                         }
-                                        player.usePotion((ITEM_TYPE) itemSet.toArray()[input2]);
+                                        player.usePotion((ITEM_TYPE) itemSet.toArray()[input2 - 1]);
                                         flag = false;
+                                        isPlayerHit = !isPlayerHit;
                                         break;
                                     }
                                     case 3 -> {
@@ -135,6 +138,12 @@ public class FightSession extends Thread {
         }
     }
 
+    private void winBattle(Player player, Monster monster) {
+        player.addExp(monster.getExp());
+        player.inventory.add(monster.dropItemType, monster.itemCount);
+        System.out.println("Вы получили:\n  Опыт - " + monster.getExp() + "\n  " + monster.dropItemType.ruName + " -  " + monster.itemCount);
+    }
+
     public static Monster getRandomMonster(int playerLevel) {
         Random random = new Random();
         MONSTER_TYPE type = MONSTER_TYPE.values()[random.nextInt(0, 3)];
@@ -154,7 +163,7 @@ public class FightSession extends Thread {
     private boolean isFindNextFight() {
         System.out.println("Теперь перед ним выбор\n1. Вернутся в город\n2. Найти нового противника\n");
         int input = readUserInput(1, 2);
-        if (input == 0) {
+        if (input == 1) {
             System.out.println("Возвращаемся в город...");
             return false;
         } else {

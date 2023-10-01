@@ -32,7 +32,8 @@ public class Traider extends Thread {
                 case 1 -> traiderSelling();
                 case 2 -> traiderBuying();
                 case 3 -> {
-                    System.out.println(MESSAGES.ENTERS_15);
+                    System.out.println(MESSAGES.ENTERS_10);
+                    System.out.println("Выходим из лавки торговца\n" + MESSAGES.ENTERS_5);
                     isTraiding = false;
                 }
             }
@@ -86,7 +87,7 @@ public class Traider extends Thread {
         }
         int f = 1;
         System.out.println(MESSAGES.ENTERS_10);
-        System.out.println("Торговец говорит:\n  Сегодня я скупаю только эти товары" + MESSAGES.ENTERS_5 + "\n\n");
+        System.out.println("Торговец говорит:\n  Сегодня я скупаю только эти товары" + MESSAGES.ENTERS_5 + "\n\n\n");
         for (Map.Entry<ITEM_TYPE, Integer> item : types.entrySet()) {
             System.out.print((f++) + ". " + item.getKey().ruName);
             countPrint(" ", 30 - item.getKey().ruName.length());

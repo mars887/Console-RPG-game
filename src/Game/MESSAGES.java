@@ -9,12 +9,13 @@ public abstract class MESSAGES {
     public static final String ENTERS_5 = "\n\n\n\n\n";
 
     public static final String MENU_MESSAGE = """
-            Куда вы хотите пойти?
-                                
-            1. К торговцу        
-            2. В тёмный лес     
-            3. Заглянуть в инвентарь, узнать уровень
-            4. На выход""";
+            1. К торговцу
+            2. К целительнице (10 монет)
+            3. В тёмный лес
+            4. Заглянуть в инвентарь, узнать уровень
+            5. На выход
+            
+            Я хочу\s""";
 
     public static final String TRAIDER_NOT_AVAILABLE =
             "Рабочий день торговца ещё не начался, загляните в другое время...\n\n\n";

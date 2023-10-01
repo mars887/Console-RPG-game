@@ -9,7 +9,6 @@ import Game.Rooms.Traider;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Random;
 
 public class Game extends Thread {
 
@@ -28,20 +27,14 @@ public class Game extends Thread {
     @Override
     public void run() {
 
-        System.out.print("\n\n\n\n\nВведите имя персонажа - ");   // ----------------------------------------------- create player
-        try {
-            player.setPlayerName(scan.readLine());
-        } catch (IOException e) {
-            System.out.println("возникла ошибка поэтому персонаж теперь Вася\n\n\n");
-            player.setPlayerName("Вася");
-        }
+        player.playerName = enterPlayerName(player);
+        initGameConsoleOutput();
 
         System.out.println(MESSAGES.ENTERS_15);
         while (!gameEnded) {    // --------------------------------------------------------------------------- game loop
-            System.out.println(MESSAGES.MENU_MESSAGE);
-
+            System.out.print(MESSAGES.MENU_MESSAGE);
             int input = readUserInput(1, 4);
-            System.out.println("\n\n\n\n\n\n\n\n\n");
+            System.out.println(MESSAGES.ENTERS_10);
 
             switch (input) {    // cases
                 case 1:
@@ -53,6 +46,13 @@ public class Game extends Thread {
                     }
                     break;
                 case 2:
+                    if (player.getMoney() >= 10) healPlayer(player); else {
+                        System.out.println(MESSAGES.ENTERS_10);
+                        System.out.println("Недостаточно монет...");
+                        System.out.println(MESSAGES.ENTERS_5);
+                    };
+                    break;
+                case 3:
                     FightSession fightSession = new FightSession(player);
                     fightSession.start();
                     try {
@@ -61,14 +61,49 @@ public class Game extends Thread {
                     }
                     if (!fightSession.isWin) player.restoreHp();
                     break;
-                case 3:
+                case 4:
                     Inventory.printInventory(player);
                     break;
-                case 4:
+                case 5:
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n--- ok ---\n\n\n\n\n\n\n\n\n");
                     gameEnded = true;
             }
         }
+    }
+
+    private void initGameConsoleOutput() {
+        System.out.println("----------------------------------------------------");
+        System.out.println("|\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|  " + player.playerName
+                + " будет очень рад если вы правильно настроите высоту консоли\n|\n|\n|\n|\n|\n|\n|\n|\n|\n|"
+                + "  Введите что-нибуть для продолжения");
+        System.out.print("----------------------------------------------------");
+        try {
+            scan.readLine();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String enterPlayerName(Player player) {
+        System.out.println(MESSAGES.ENTERS_10);
+        System.out.print("Введите имя персонажа - ");
+        String name = null;
+        do {
+            if(name != null) System.out.print("Неправильное имя, попробуйте снова - ");
+            try {
+                name = scan.readLine();
+            } catch (IOException e) {
+                System.out.print("\nВозникла ошибка, попробуйте снова - ");
+            }
+        } while (name == null || name.length() <= 1);
+        return (String.valueOf(name.charAt(0)).toUpperCase() + name.substring(1, name.length()));
+    }
+
+    private void healPlayer(Player player) {
+        player.setHealth(player.getMaxHealth());
+        player.setMoney(player.getMoney() - 10);
+        System.out.println("Теперь " + player.playerName + " полностью здоров!\n");
+        System.out.println(MESSAGES.ENTERS_5);
     }
 
     public static void countPrint(String message, int i) {
@@ -81,16 +116,16 @@ public class Game extends Thread {
             try {
                 input = Integer.parseInt(readScanner());
             } catch (IOException e) {
-                System.out.println("что-то не так...\nПопробуй заново\n\n\n");
+                System.out.print("что-то не так...\nПопробуй заново - ");
                 continue;
             } catch (NumberFormatException e) {
-                System.out.println("это не число...\nПопробуй заново\n\n\n");
+                System.out.print("это не число...\nПопробуй заново - ");
                 continue;
             }
             if (input >= a && input <= b) {
                 return input;
             } else {
-                System.out.println("Нет такого варианта...\nПопробуй заново\n\n\n");
+                System.out.print("Нет такого варианта...\nПопробуй заново - ");
             }
         }
     }
