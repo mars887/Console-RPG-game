@@ -45,7 +45,7 @@ public class Traider extends Thread {
         while (isSelling) {
             System.out.println(MESSAGES.ENTERS_10);
             System.out.println(MESSAGES.TRAIDER_SELLING_LIST);
-            int option = readUserInput(1, 4);
+            int option = readUserInput(1, 5);
 
             ITEM_TYPE item = null;
             if ((item = getItemById(option + 3)) == null) {
@@ -69,7 +69,11 @@ public class Traider extends Thread {
             System.out.print("Можно купить от " + 1 + " до " + maxCount + " едениц товара\nСколько берём - ");
             int quantity = readUserInput(1, maxCount);
             System.out.println("Покупаем...\n");
-            player.inventory.add(item, quantity);
+            if(item == ITEM_TYPE.LEVEL_UP_POTION) {
+                for(int i = 0;i < quantity;i++) player.addExp(player.getXpForNextLevel());
+            } else {
+                player.inventory.add(item, quantity);
+            }
             player.setMoney(playerMoney - quantity * oneCost);
             player.addExp(quantity);
         }
@@ -133,6 +137,9 @@ public class Traider extends Thread {
             }
             case 6 -> {
                 return ITEM_TYPE.HEALING_POTION_40HP;
+            }
+            case 7 -> {
+                return ITEM_TYPE.LEVEL_UP_POTION;
             }
         }
         return null;

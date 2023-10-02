@@ -33,7 +33,8 @@ public abstract class MESSAGES {
             "\n 1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DEXTERITY_POTION) +
             "\n 2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_15HP) +
             "\n 3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_40HP) +
-            "\n 4. Вернуться назад";
+            "\n 4. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.LEVEL_UP_POTION) +
+            "\n 5. Вернуться назад";
 
     public static final String TRAIDER_BUYING_LIST = "Список товаров: " +
             "\n1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.BONE) +

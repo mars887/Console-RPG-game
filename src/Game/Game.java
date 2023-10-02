@@ -18,9 +18,9 @@ public class Game extends Thread {
     public Player player;
 
     public Game() {
-        player = new Player(100, 100, 20, 0.8f, 1, 0, 40);
+        player = new Player(100, 100, 20, 0.85f, 1, 0, 40);
         player.inventory.add(ITEM_TYPE.BONE, 37);
-        player.inventory.add(ITEM_TYPE.HEALING_POTION_15HP, 1);
+        player.inventory.add(ITEM_TYPE.HEALING_POTION_15HP, 2);
         player.inventory.add(ITEM_TYPE.FABRIC, 29);
     }
 
@@ -46,11 +46,18 @@ public class Game extends Thread {
                     }
                     break;
                 case 2:
-                    if (player.getMoney() >= 10) healPlayer(player); else {
+                    System.out.println(MESSAGES.ENTERS_10);
+                    if (player.getMoney() >= 10) {
+                        Game.healPlayer(player);
+                    } else if (player.getHealth() == player.getMaxHealth()) {
+                        System.out.println(MESSAGES.ENTERS_10);
+                        System.out.println(player.playerName + " полностью здоров");
+                        System.out.println(MESSAGES.ENTERS_5);
+                    } else {
                         System.out.println(MESSAGES.ENTERS_10);
                         System.out.println("Недостаточно монет...");
                         System.out.println(MESSAGES.ENTERS_5);
-                    };
+                    }
                     break;
                 case 3:
                     FightSession fightSession = new FightSession(player);
@@ -89,7 +96,7 @@ public class Game extends Thread {
         System.out.print("Введите имя персонажа - ");
         String name = null;
         do {
-            if(name != null) System.out.print("Неправильное имя, попробуйте снова - ");
+            if (name != null) System.out.print("Неправильное имя, попробуйте снова - ");
             try {
                 name = scan.readLine();
             } catch (IOException e) {
@@ -99,7 +106,7 @@ public class Game extends Thread {
         return (String.valueOf(name.charAt(0)).toUpperCase() + name.substring(1, name.length()));
     }
 
-    private void healPlayer(Player player) {
+    public static void healPlayer(Player player) {
         player.setHealth(player.getMaxHealth());
         player.setMoney(player.getMoney() - 10);
         System.out.println("Теперь " + player.playerName + " полностью здоров!\n");
@@ -108,6 +115,17 @@ public class Game extends Thread {
 
     public static void countPrint(String message, int i) {
         for (int j = 0; j < i; j++) System.out.print(message);
+    }
+    public static void printWithBorder(String message, int i) {
+        System.out.print(message);
+        countPrint(" ",i - message.length());
+    }
+    public static void printComparisonWithBorder(String message, int i,String message1) {
+        printWithBorder(message,i - message1.length());
+        System.out.print(message1);
+    }
+    public static void printComparisonWithBorder(int value,int i, int value1) {
+        printComparisonWithBorder(String.valueOf(value),i,String.valueOf(value1));
     }
 
     public static int readUserInput(int a, int b) {

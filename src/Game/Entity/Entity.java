@@ -49,7 +49,7 @@ public abstract class Entity implements Fighter {
     }
 
     public int getStrength() {
-        return strength;
+        return (strength);
     }
 
     public float getDexterity() {

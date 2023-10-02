@@ -10,7 +10,8 @@ import java.util.Random;
 
 public class Player extends Entity {
 
-    private static final int HP_PER_LEVEL = 10;
+    private static final int HP_PER_LEVEL = 5;
+    private static final int STRENGTH_PER_LEVEL = 2;
     protected int money;           // money       x > 0
     public String playerName;
 
@@ -58,8 +59,9 @@ public class Player extends Entity {
         while (exp > 0) {
             if (100 + this.level * 15 <= exp) {
                 exp -= 100 + level++ * 15;
-                maxHealth += HP_PER_LEVEL;
-                health += HP_PER_LEVEL;
+                maxHealth += HP_PER_LEVEL + level / 2;
+                health = Math.min(health + HP_PER_LEVEL + level,maxHealth);
+                strength += STRENGTH_PER_LEVEL + level / 10;
                 if (print) System.out.println("Level Up to " + level + " !");
             } else {
                 return;
@@ -99,9 +101,9 @@ public class Player extends Entity {
                 System.out.println("Зелье будет действовать ещё 1 минуту");
             }
             case HEALING_POTION_15HP ->
-                    System.out.println("Терерь у " + playerName + " " + (health = Math.min(health + 15, maxHealth)) + " здоровья");
+                    System.out.println("Терерь у " + playerName + " " + (health = Math.min(health + (int)(maxHealth * 0.30), maxHealth)) + " здоровья");
             case HEALING_POTION_40HP ->
-                    System.out.println("Терерь у " + playerName + " " + (health = Math.min(health + 40, maxHealth)) + " здоровья");
+                    System.out.println("Терерь у " + playerName + " " + (health = Math.min(health + (int)(maxHealth * 0.70), maxHealth)) + " здоровья");
         }
         inventory.remove(item, 1);
     }
