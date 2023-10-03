@@ -21,7 +21,7 @@ public class FightSession extends Thread {
 
     public boolean isWin = true;
 
-    private final float playerSavedDexterity;
+    public final float playerSavedDexterity;
 
     public boolean continueFight = false;
 
@@ -112,7 +112,6 @@ public class FightSession extends Thread {
                 isFighting = false;
             }
         }
-        player.setDexterity(playerSavedDexterity);
     }
 
     private boolean afterMonsterHit(Random rand) {

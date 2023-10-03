@@ -63,6 +63,7 @@ public class Game extends Thread {
             fightSession.join();
         } catch (InterruptedException e) {
         }
+        player.setDexterity(fightSession.playerSavedDexterity);
         if(fightSession.continueFight) return true;
         if (!fightSession.isWin) player.restoreHp();
         return false;
