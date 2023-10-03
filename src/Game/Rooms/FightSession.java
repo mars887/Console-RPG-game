@@ -219,8 +219,8 @@ public class FightSession extends Thread {
         MONSTER_TYPE type = MONSTER_TYPE.values()[random.nextInt(0, 3)];
         return new Monster(
                 type.ruType,
-                type.hp + (type.hpPerLvl) * playerLevel + playerLevel + random.nextInt(-playerLevel,playerLevel),
-                type.strength + (type.strengthPerLvl) * playerLevel + random.nextInt(-playerLevel,playerLevel),
+                type.hp + (type.hpPerLvl) * playerLevel + playerLevel + random.nextInt(-playerLevel - 1,playerLevel + 1),
+                type.strength + (type.strengthPerLvl) * playerLevel + random.nextInt(-playerLevel - 1,playerLevel + 1),
                 type.dexterity,
                 type.playerDexterityChange,
                 type.exp + (type.expPerLvl + random.nextInt(-1, 2)) * playerLevel,
