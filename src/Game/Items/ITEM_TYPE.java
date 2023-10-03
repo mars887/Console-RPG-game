@@ -6,8 +6,7 @@ public enum ITEM_TYPE {
     DIAMOND("алмаз", 50, 90, 16,false),
     HEALING_POTION_15HP("зелье востановления +30%", 30, 50, 3,true),
     HEALING_POTION_40HP("зелье востановления +70%", 40, 80, 2,true),
-    DEXTERITY_POTION("зелье ловкости", 35, 60, 3,true),
-    LEVEL_UP_POTION("зелье уровня",50,150,999,true);
+    DEXTERITY_POTION("зелье ловкости", 35, 60, 3,true);
 
     public final String ruName;
     public final int costSell;

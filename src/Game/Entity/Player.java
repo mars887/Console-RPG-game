@@ -11,7 +11,7 @@ import java.util.Random;
 public class Player extends Entity {
 
     private static final int HP_PER_LEVEL = 5;
-    private static final int STRENGTH_PER_LEVEL = 2;
+    private static final int STRENGTH_PER_LEVEL = 3;
     protected int money;           // money       x > 0
     public String playerName;
 
@@ -87,6 +87,7 @@ public class Player extends Entity {
     }
 
     public void usePotion(ITEM_TYPE item) {
+        System.out.println();
         switch (item) {
             case DEXTERITY_POTION -> {
                 new Thread(() -> {

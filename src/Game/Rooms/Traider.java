@@ -23,6 +23,7 @@ public class Traider extends Thread {
     public void run() {
         boolean isTraiding = true;
         System.out.println("Идём к торговцу...");
+
         while (isTraiding) {
             System.out.println(MESSAGES.ENTERS_5 + "\n\n\n");
             System.out.println(MESSAGES.TRAIDER_SELL_BUY);
@@ -41,9 +42,12 @@ public class Traider extends Thread {
     }
 
     private void traiderSelling() {
-        boolean isSelling = true;
-        while (isSelling) {
-            System.out.println(MESSAGES.ENTERS_10);
+        boolean printTraiderText = true;
+        while (true) {
+            System.out.println(MESSAGES.ENTERS_5 + "\n\n");
+            if(printTraiderText) {
+                System.out.println("Продавец разложил товар и дал вам такой выбор...\n\n\n\n\n\n\n\n");
+            } else printTraiderText = true;
             System.out.println(MESSAGES.TRAIDER_SELLING_LIST);
             int option = readUserInput(1, 5);
 
@@ -54,26 +58,26 @@ public class Traider extends Thread {
             }
 
             int playerMoney = player.getMoney();
-            int oneCost = item.costSell;
+            int oneCost = item.costBuy;
             int maxCount = Math.min(playerMoney / oneCost, player.inventory.getFreeSlotsFor(item));
 
             if (maxCount == 0) {
+                System.out.println(MESSAGES.ENTERS_5 + "\n\n");
                 if (playerMoney / oneCost == 0) {
                     System.out.println("Недостаточно монет!");
                 } else {
                     System.out.println("Нет места в инвентаре");
                 }
-                return;
+                printTraiderText = false;
+                continue;
             }
 
             System.out.print("Можно купить от " + 1 + " до " + maxCount + " едениц товара\nСколько берём - ");
             int quantity = readUserInput(1, maxCount);
+
             System.out.println("Покупаем...\n");
-            if(item == ITEM_TYPE.LEVEL_UP_POTION) {
-                for(int i = 0;i < quantity;i++) player.addExp(player.getXpForNextLevel());
-            } else {
-                player.inventory.add(item, quantity);
-            }
+
+            player.inventory.add(item, quantity);
             player.setMoney(playerMoney - quantity * oneCost);
             player.addExp(quantity);
         }
@@ -99,7 +103,7 @@ public class Traider extends Thread {
         }
         System.out.println((types.size() + 1) + ". Назад");
         int option = readUserInput(1, types.size() + 1);
-        if(option == types.size() + 1) {
+        if (option == types.size() + 1) {
             System.out.println(MESSAGES.ENTERS_10);
             return;
         }
@@ -137,9 +141,6 @@ public class Traider extends Thread {
             }
             case 6 -> {
                 return ITEM_TYPE.HEALING_POTION_40HP;
-            }
-            case 7 -> {
-                return ITEM_TYPE.LEVEL_UP_POTION;
             }
         }
         return null;

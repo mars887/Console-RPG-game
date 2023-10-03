@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static Game.Game.printWithRightBorder;
+
 public class Inventory implements HasInventory {
     public static final int INVENTORY_SIZE = 7;                 // Inventory size
     private ArrayList<ItemStack> items = new ArrayList<>();     // List of items in inventory
@@ -102,24 +104,27 @@ public class Inventory implements HasInventory {
     }
 
     public static void printInventory(Player player) {
-        System.out.println("В инвентаре лежит...");
+        System.out.println("В инвентаре " + player.playerName + " нашёл следующее...");
         Stream<ItemStack> list = player.inventory.getStream();
         AtomicInteger fullCost = new AtomicInteger();
 
         list.peek(x -> fullCost.addAndGet(x.getQuantity() * x.itemType.costSell))
                 .forEach(x -> {
-                    System.out.print("   " + x.itemType.ruName);
-                    Game.countPrint(" ", 30 - x.itemType.ruName.length());
-                    System.out.println("количество - " + x.getQuantity());
+                    printWithRightBorder(String.valueOf(x.getQuantity()),4);
+                    System.out.println(" | " + x.itemType.ruName);
                 });
-        Game.countPrint("Пусто\n", player.inventory.getFreeSlots());
+        Game.countPrint("     |\n", player.inventory.getFreeSlots());
 
-        System.out.println("Общая стоимость инвентаря - " + fullCost + " монет");
-        System.out.println("Монет имеется - " + player.getMoney());
-        System.out.print("Уровень - " + player.getLevel());
+        System.out.println("-------------------------------------------------" + " Общая стоимость - " + fullCost );
+
+        printWithRightBorder(String.valueOf(player.getMoney()),4);
+        System.out.println(" | Монет имеется");
+        printWithRightBorder(String.valueOf(player.getLevel()),4);
+        System.out.print(" | Уровень");
         System.out.print("       Опыт - " + player.getExp());
         System.out.println("       Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
-        System.out.println("Здоровье - " + player.getHealth() + "  (Max - " + player.getMaxHealth() + ")");
+        printWithRightBorder(String.valueOf(player.getHealth()),4);
+        System.out.println(" | Здоровье  (Max - " + player.getMaxHealth() + ")");
         System.out.println("\n\n\n");
     }
 }

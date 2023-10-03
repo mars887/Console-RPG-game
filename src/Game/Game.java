@@ -27,7 +27,7 @@ public class Game extends Thread {
     @Override
     public void run() {
 
-        player.playerName = enterPlayerName(player);
+        player.playerName = enterPlayerName();
         initGameConsoleOutput();
 
         System.out.println(MESSAGES.ENTERS_15);
@@ -38,35 +38,13 @@ public class Game extends Thread {
 
             switch (input) {    // cases
                 case 1:
-                    Traider traider = new Traider(player);
-                    traider.start();
-                    try {
-                        traider.join();
-                    } catch (InterruptedException e) {
-                    }
+                    while(goToTraider()) {}
                     break;
                 case 2:
-                    System.out.println(MESSAGES.ENTERS_10);
-                    if (player.getMoney() >= 10) {
-                        Game.healPlayer(player);
-                    } else if (player.getHealth() == player.getMaxHealth()) {
-                        System.out.println(MESSAGES.ENTERS_10);
-                        System.out.println(player.playerName + " полностью здоров");
-                        System.out.println(MESSAGES.ENTERS_5);
-                    } else {
-                        System.out.println(MESSAGES.ENTERS_10);
-                        System.out.println("Недостаточно монет...");
-                        System.out.println(MESSAGES.ENTERS_5);
-                    }
+                    goToMedic();
                     break;
                 case 3:
-                    FightSession fightSession = new FightSession(player);
-                    fightSession.start();
-                    try {
-                        fightSession.join();
-                    } catch (InterruptedException e) {
-                    }
-                    if (!fightSession.isWin) player.restoreHp();
+                    while(goToForest()) {}
                     break;
                 case 4:
                     Inventory.printInventory(player);
@@ -75,6 +53,43 @@ public class Game extends Thread {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n--- ok ---\n\n\n\n\n\n\n\n\n");
                     gameEnded = true;
             }
+        }
+    }
+
+    private boolean goToForest() {
+        FightSession fightSession = new FightSession(player);
+        fightSession.start();
+        try {
+            fightSession.join();
+        } catch (InterruptedException e) {
+        }
+        if(fightSession.continueFight) return true;
+        if (!fightSession.isWin) player.restoreHp();
+        return false;
+    }
+
+    private boolean goToTraider() {
+        Traider traider = new Traider(player);
+        traider.start();
+        try {
+            traider.join();
+        } catch (InterruptedException e) {
+        }
+        return false;
+    }
+
+    private void goToMedic() {
+        System.out.println(MESSAGES.ENTERS_10);
+        if (player.getHealth() == player.getMaxHealth()) {
+            System.out.println(MESSAGES.ENTERS_10);
+            System.out.println(player.playerName + " полностью здоров\n");
+            System.out.println(MESSAGES.ENTERS_5);
+        } else if (player.getMoney() >= 10) {
+            Game.healPlayer(player);
+        } else {
+            System.out.println(MESSAGES.ENTERS_10);
+            System.out.println("Недостаточно монет...");
+            System.out.println(MESSAGES.ENTERS_5);
         }
     }
 
@@ -91,7 +106,7 @@ public class Game extends Thread {
         }
     }
 
-    private String enterPlayerName(Player player) {
+    private String enterPlayerName() {
         System.out.println(MESSAGES.ENTERS_10);
         System.out.print("Введите имя персонажа - ");
         String name = null;
@@ -116,23 +131,26 @@ public class Game extends Thread {
     public static void countPrint(String message, int i) {
         for (int j = 0; j < i; j++) System.out.print(message);
     }
-    public static void printWithBorder(String message, int i) {
+
+    public static void printWithRightBorder(String message, int i) {
         System.out.print(message);
-        countPrint(" ",i - message.length());
+        countPrint(" ", i - message.length());
     }
-    public static void printComparisonWithBorder(String message, int i,String message1) {
-        printWithBorder(message,i - message1.length());
+
+    public static void printComparisonWithBorder(String message, int i, String message1) {
+        printWithRightBorder(message, i - message1.length());
         System.out.print(message1);
     }
-    public static void printComparisonWithBorder(int value,int i, int value1) {
-        printComparisonWithBorder(String.valueOf(value),i,String.valueOf(value1));
+
+    public static void printComparisonWithBorder(int value, int i, int value1) {
+        printComparisonWithBorder(String.valueOf(value), i, String.valueOf(value1));
     }
 
     public static int readUserInput(int a, int b) {
         while (true) {
-            int input = 0;
+            int input;
             try {
-                input = Integer.parseInt(readScanner());
+                input = Integer.parseInt(scan.readLine());
             } catch (IOException e) {
                 System.out.print("что-то не так...\nПопробуй заново - ");
                 continue;
@@ -146,9 +164,5 @@ public class Game extends Thread {
                 System.out.print("Нет такого варианта...\nПопробуй заново - ");
             }
         }
-    }
-
-    public static String readScanner() throws IOException {
-        return scan.readLine();
     }
 }
