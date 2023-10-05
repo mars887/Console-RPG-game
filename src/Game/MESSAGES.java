@@ -10,12 +10,11 @@ public abstract class MESSAGES {
 
     public static final String MENU_MESSAGE = """
             1. К торговцу
-            2. К целительнице (10 монет)
+            2. Mob Rush
             3. В тёмный лес
-            4. Заглянуть в инвентарь, узнать уровень
-            5. На выход
-            
-            Я хочу\s""";
+            4. К целительнице (10 монет)
+            5. Заглянуть в инвентарь, узнать уровень
+             """;
 
     public static final String TRAIDER_NOT_AVAILABLE =
             "Рабочий день торговца ещё не начался, загляните в другое время...\n\n\n";
@@ -23,21 +22,17 @@ public abstract class MESSAGES {
     public static final String DANGEON_NOT_AVAILABLE =
             "В лесу ремонт, загляните в другое время...\n\n\n";
 
+    public static final String MOB_RUSH_NOT_AVAILABLE =
+            "Пока не доступно, загляните в другое время";
+
 
     public static final String TRAIDER_SELL_BUY = """
-            1. Хочу что-нибуть купить
+            1. Хочу купить
             2. Хочу продать
-            3. Так, где тут выход""";
+            3. Хочу подзаработать""";
 
     public static final String TRAIDER_SELLING_LIST =
-            "\n 1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DEXTERITY_POTION) +
-            "\n 2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_15HP) +
-            "\n 3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_40HP) +
-            "\n 4. Вернуться назад";
-
-    public static final String TRAIDER_BUYING_LIST = "Список товаров: " +
-            "\n1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.BONE) +
-            "\n2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.FABRIC) +
-            "\n3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DIAMOND) +
-            "\n4. Вернуться назад";
+            "\n 1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_15HP) +
+                    "\n 2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_40HP) +
+                    "\n 3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DEXTERITY_POTION);
 }

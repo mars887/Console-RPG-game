@@ -7,8 +7,8 @@ import Game.MESSAGES;
 import java.util.HashMap;
 import java.util.Map;
 
-import static Game.Game.countPrint;
 import static Game.Game.readUserInput;
+import static Game.TextWriter.*;
 
 public class Traider extends Thread {
 
@@ -25,14 +25,15 @@ public class Traider extends Thread {
         System.out.println("Идём к торговцу...");
 
         while (isTraiding) {
-            System.out.println(MESSAGES.ENTERS_5 + "\n\n\n");
+            System.out.println(MESSAGES.ENTERS_5 + "\n\n");
             System.out.println(MESSAGES.TRAIDER_SELL_BUY);
 
-            int input = readUserInput(1, 3);
+            int input = readUserInput(1, 4, 0);
             switch (input) {
                 case 1 -> traiderSelling();
                 case 2 -> traiderBuying();
-                case 3 -> {
+                case 3 -> traiderWorking();
+                case 0 -> {
                     System.out.println(MESSAGES.ENTERS_10);
                     System.out.println("Выходим из лавки торговца\n" + MESSAGES.ENTERS_5);
                     isTraiding = false;
@@ -41,21 +42,25 @@ public class Traider extends Thread {
         }
     }
 
+    private void traiderWorking() {
+        System.out.println(MESSAGES.ENTERS_10);
+        System.out.println("у меня пока нет работы для тебя\n");
+    }
+
     private void traiderSelling() {
         boolean printTraiderText = true;
+
         while (true) {
             System.out.println(MESSAGES.ENTERS_5 + "\n\n");
-            if(printTraiderText) {
+            if (printTraiderText) {
                 System.out.println("Продавец разложил товар и дал вам такой выбор...\n\n\n\n\n\n\n\n");
             } else printTraiderText = true;
-            System.out.println(MESSAGES.TRAIDER_SELLING_LIST);
-            int option = readUserInput(1, 5);
 
-            ITEM_TYPE item = null;
-            if ((item = getItemById(option + 3)) == null) {
-                System.out.println(MESSAGES.ENTERS_10);
-                return;
-            }
+            System.out.println(MESSAGES.TRAIDER_SELLING_LIST);
+            int option = readUserInput(1, 3, 0);
+            if(option == 0) return;
+
+            ITEM_TYPE item = getItemById(option + 3);
 
             int playerMoney = player.getMoney();
             int oneCost = item.costBuy;
@@ -73,7 +78,8 @@ public class Traider extends Thread {
             }
 
             System.out.print("Можно купить от " + 1 + " до " + maxCount + " едениц товара\nСколько берём - ");
-            int quantity = readUserInput(1, maxCount);
+            int quantity = readUserInput(1, maxCount, 0);
+            if(quantity == 0) continue;
 
             System.out.println("Покупаем...\n");
 
@@ -84,65 +90,80 @@ public class Traider extends Thread {
     }
 
     private void traiderBuying() {
-        HashMap<ITEM_TYPE, Integer> types = new HashMap();
-        for (int i = 1; i <= 3; i++) {
-            if (player.inventory.contains(getItemById(i)) > 0)
-                types.put(getItemById(i), player.inventory.contains(getItemById(i)));
+        boolean printTraiderText = true;
+        while (true) {
+            HashMap<ITEM_TYPE, Integer> types = player.inventory.getHashMap(false);
+
+            if (types.size() == 0) {
+                System.out.println("Нечего продавать...");
+                return;
+            }
+
+            if(printTraiderText) {
+                System.out.println(MESSAGES.ENTERS_10);
+                System.out.println("Торговец говорит:\n  Сегодня я скупаю только эти товары" + MESSAGES.ENTERS_5 + "\n\n\n");
+            } else printTraiderText = true;
+
+            int f = 1;
+            for (Map.Entry<ITEM_TYPE, Integer> item : types.entrySet()) {
+                printWithRightBorder(f++ + ". " + item.getKey().ruName, 24);
+                printComparisonWithBorder("количество - " + item.getValue(), 36,"(" + item.getKey().costBuy * item.getValue() + " монет)");
+                System.out.println();
+            }
+            System.out.println(f++ + ". Продать всё");
+            System.out.println(f + ". Продать половину");
+
+            int option = readUserInput(1, types.size() + 2, 0);
+            if (option == types.size() + 1) {
+                traiderSell(false);
+                return;
+            } else if (option == types.size() + 2) {
+                printTraiderText = false;
+                traiderSell(true);
+                continue;
+            }
+            if (option == 0) {
+                System.out.println(MESSAGES.ENTERS_10);
+                return;
+            }
+
+            Map.Entry<ITEM_TYPE, Integer> itemEntry = (Map.Entry<ITEM_TYPE, Integer>) types.entrySet().toArray()[option - 1];
+            ITEM_TYPE item = itemEntry.getKey();
+            int inInventory = itemEntry.getValue();
+
+            System.out.print("\nВы можете продать от " + 1 + " до " + inInventory + " штук(и)\nСколько продаём? - ");
+            int quantity = readUserInput(1, inInventory, 0);
+            if(quantity == 0) continue;
+            System.out.println(MESSAGES.ENTERS_5);
+            System.out.println("\n\n\nПродаём...");
+            printTraiderText = false;
+            System.out.println(MESSAGES.ENTERS_5 + "\n\n\n");
+
+            player.inventory.remove(item, quantity);
+            player.setMoney(player.getMoney() + (quantity * item.costSell));
+            player.addExp(quantity);
         }
-        if (types.size() == 0) {
-            System.out.println("Нечего продавать...");
-            return;
-        }
-        int f = 1;
+    }
+
+    private void traiderSell(boolean isHalf) {
         System.out.println(MESSAGES.ENTERS_10);
-        System.out.println("Торговец говорит:\n  Сегодня я скупаю только эти товары" + MESSAGES.ENTERS_5 + "\n\n\n");
-        for (Map.Entry<ITEM_TYPE, Integer> item : types.entrySet()) {
-            System.out.print((f++) + ". " + item.getKey().ruName);
-            countPrint(" ", 30 - item.getKey().ruName.length());
-            System.out.println("имеется - " + item.getValue() + "   (" + (item.getKey().costSell * item.getValue()) + " монет)");
+        int allQuantity = 0;
+        int allCost = 0;
+        for(Map.Entry<ITEM_TYPE,Integer> item : player.inventory.getHashMap(false).entrySet()) {
+            int quantity = (isHalf ? item.getValue() / 2 + 1 : item.getValue());
+            int cost = item.getKey().costSell * quantity;
+            player.inventory.remove(item.getKey(),quantity);
+            player.setMoney(player.getMoney() + cost);
+            allQuantity += quantity;
+            allCost += cost;
         }
-        System.out.println((types.size() + 1) + ". Назад");
-        int option = readUserInput(1, types.size() + 1);
-        if (option == types.size() + 1) {
-            System.out.println(MESSAGES.ENTERS_10);
-            return;
-        }
-
-        Map.Entry<ITEM_TYPE, Integer> itemEntry = (Map.Entry<ITEM_TYPE, Integer>) types.entrySet().toArray()[option - 1];
-        ITEM_TYPE item = itemEntry.getKey();
-        int inInventory = itemEntry.getValue();
-
-        System.out.print("\nВы можете продать от " + 1 + " до " + inInventory + " штук(и)\nСколько продаём? - ");
-        int quantity = readUserInput(1, inInventory);
+        player.addExp(allQuantity);
+        System.out.println("Было продано    - " + allQuantity);
+        System.out.println("Монет получено  - " + allCost);
         System.out.println(MESSAGES.ENTERS_5);
-        System.out.println("\n\n\nПродаём...");
-
-        player.inventory.remove(item, quantity);
-        player.setMoney(player.getMoney() + (quantity * item.costSell));
-        player.addExp(quantity);
     }
 
     private ITEM_TYPE getItemById(int id) {
-        switch (id) {
-            case 1 -> {
-                return ITEM_TYPE.BONE;
-            }
-            case 2 -> {
-                return ITEM_TYPE.FABRIC;
-            }
-            case 3 -> {
-                return ITEM_TYPE.DIAMOND;
-            }
-            case 4 -> {
-                return ITEM_TYPE.DEXTERITY_POTION;
-            }
-            case 5 -> {
-                return ITEM_TYPE.HEALING_POTION_15HP;
-            }
-            case 6 -> {
-                return ITEM_TYPE.HEALING_POTION_40HP;
-            }
-        }
-        return null;
+        return ITEM_TYPE.values()[id - 1];
     }
 }

@@ -1,5 +1,6 @@
 package Game;
 
+import Game.Entity.DataSupplier;
 import Game.Items.ITEM_TYPE;
 import Game.Items.Inventory;
 import Game.Entity.Player;
@@ -18,8 +19,8 @@ public class Game extends Thread {
     public Player player;
 
     public Game() {
-        player = new Player(100, 100, 20, 0.85f, 1, 0, 40);
-        player.inventory.add(ITEM_TYPE.BONE, 37);
+        player = new Player(100, 100, 20, DataSupplier.DexterityFunction.apply(1,0.7f), 1, 0, 400);
+        player.inventory.add(ITEM_TYPE.BONE, 137);
         player.inventory.add(ITEM_TYPE.HEALING_POTION_15HP, 2);
         player.inventory.add(ITEM_TYPE.FABRIC, 29);
     }
@@ -29,11 +30,12 @@ public class Game extends Thread {
 
         player.playerName = enterPlayerName();
         initGameConsoleOutput();
+        printHelp();
 
         System.out.println(MESSAGES.ENTERS_15);
         while (!gameEnded) {    // --------------------------------------------------------------------------- game loop
             System.out.print(MESSAGES.MENU_MESSAGE);
-            int input = readUserInput(1, 4);
+            int input = readUserInput(1, 6, 0);
             System.out.println(MESSAGES.ENTERS_10);
 
             switch (input) {    // cases
@@ -41,18 +43,33 @@ public class Game extends Thread {
                     while(goToTraider()) {}
                     break;
                 case 2:
-                    goToMedic();
+                    System.out.println(MESSAGES.MOB_RUSH_NOT_AVAILABLE);
                     break;
                 case 3:
                     while(goToForest()) {}
                     break;
                 case 4:
-                    Inventory.printInventory(player);
+                    goToMedic();
                     break;
                 case 5:
+                    Inventory.printInventory(player);
+                    break;
+                case 0:
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n--- ok ---\n\n\n\n\n\n\n\n\n");
                     gameEnded = true;
             }
+        }
+    }
+
+    private void printHelp() {
+        System.out.println(MESSAGES.ENTERS_5);
+        System.out.println("0 это всегда назад или выход");
+        System.out.println("даже если нет такого варианта");
+        System.out.println(MESSAGES.ENTERS_5);
+        System.out.println("enter для продолжения");
+        try {
+            scan.readLine();
+        } catch (IOException e) {
         }
     }
 
@@ -63,7 +80,6 @@ public class Game extends Thread {
             fightSession.join();
         } catch (InterruptedException e) {
         }
-        player.setDexterity(fightSession.playerSavedDexterity);
         if(fightSession.continueFight) return true;
         if (!fightSession.isWin) player.restoreHp();
         return false;
@@ -129,25 +145,7 @@ public class Game extends Thread {
         System.out.println(MESSAGES.ENTERS_5);
     }
 
-    public static void countPrint(String message, int i) {
-        for (int j = 0; j < i; j++) System.out.print(message);
-    }
-
-    public static void printWithRightBorder(String message, int i) {
-        System.out.print(message);
-        countPrint(" ", i - message.length());
-    }
-
-    public static void printComparisonWithBorder(String message, int i, String message1) {
-        printWithRightBorder(message, i - message1.length());
-        System.out.print(message1);
-    }
-
-    public static void printComparisonWithBorder(int value, int i, int value1) {
-        printComparisonWithBorder(String.valueOf(value), i, String.valueOf(value1));
-    }
-
-    public static int readUserInput(int a, int b) {
+    public static int readUserInput(int a, int b, int extra) {
         while (true) {
             int input;
             try {
@@ -159,6 +157,7 @@ public class Game extends Thread {
                 System.out.print("это не число...\nПопробуй заново - ");
                 continue;
             }
+            if(extra == input) return extra;
             if (input >= a && input <= b) {
                 return input;
             } else {

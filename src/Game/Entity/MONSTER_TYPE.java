@@ -3,34 +3,32 @@ package Game.Entity;
 import Game.Items.ITEM_TYPE;
 
 public enum MONSTER_TYPE {
-    ZOMBIE("зомби", 100, 10, 0.7f, 1, ITEM_TYPE.FABRIC, 8, 10, 5, 20, 5),
-    SKELETON("скелет", 70, 10, 0.9f, 0.9f, ITEM_TYPE.BONE, 8, 15, 5, 25, 4),
-    GOBLIN("гоблин", 120, 10, 0.8f, 0.95f, ITEM_TYPE.DIAMOND, 3, 25, 7, 30, 3);
+    ZOMBIE("зомби", 100, 10, 0.75f, 1, ITEM_TYPE.FABRIC, 8, 1, 20, 4),
+    SKELETON("скелет", 70, 10, 0.9f, 0.9f, ITEM_TYPE.BONE, 8, 1.2f, 25, 4),
+    GOBLIN("гоблин", 120, 10, 0.8f, 0.95f, ITEM_TYPE.DIAMOND, 3, 1.5f, 30, 4);
 
-    public final String ruType;
-    public final int hp;
-    public final int hpPerLvl;
-    public final float dexterity;
-    public final float playerDexterityChange;
-    public final ITEM_TYPE dropItemType;
-    public final int itemCount;
-    public final int exp;
-    public final int expPerLvl;
-    public final int strength;
-    public final int strengthPerLvl;
+    public final String ruType;               // russian name
+    public final int health;                  // preFunction health
+    public final int healthFunc;              // Function health const
+    public final double dexterity;            // standard dexterity
+    public final float playerDexterityChange; // on start fight:  player.dexterity *= this
+    public final ITEM_TYPE dropItemType;      // type of drop
+    public final int itemCount;               // number of drops items
+    public final float expConst;              // pre expFunc value
+    public final int strength;                // preFunction strength
+    public final int strengthFunc;            // Function strength const
 
-    MONSTER_TYPE(String ruType, int hp, int hpPerLvl, float dexterity, float playerDexterityChange
-            , ITEM_TYPE dropItemType, int itemCount, int exp, int expPerLvl, int strength, int strengthPerLvl) {
+    MONSTER_TYPE(String ruType, int health, int healthFunc, double dexterity, float playerDexterityChange
+            , ITEM_TYPE dropItemType, int itemCount, float expConst, int strength, int strengthFunc) {
         this.ruType = ruType;
-        this.hp = hp;
-        this.hpPerLvl = hpPerLvl;
+        this.health = health;
+        this.healthFunc = healthFunc;
         this.dexterity = dexterity;
         this.playerDexterityChange = playerDexterityChange;
         this.dropItemType = dropItemType;
         this.itemCount = itemCount;
-        this.exp = exp;
-        this.expPerLvl = expPerLvl;
         this.strength = strength;
-        this.strengthPerLvl = strengthPerLvl;
+        this.strengthFunc = strengthFunc;
+        this.expConst = expConst;
     }
 }

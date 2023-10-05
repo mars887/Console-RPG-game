@@ -12,7 +12,7 @@ public class Monster extends Entity {
     public final int itemCount;
 
 
-    public Monster(String ruType, int maxHealth, int strength, float dexterity,float playerDexterityChange, int exp,ITEM_TYPE dropItemType, int itemCount,int playerLevel) {
+    public Monster(String ruType, int maxHealth, int strength, double dexterity,float playerDexterityChange, int exp,ITEM_TYPE dropItemType, int itemCount,int playerLevel) {
         super(maxHealth, strength, dexterity, exp);
         this.itemCount = itemCount;
         this.dropItemType = dropItemType;

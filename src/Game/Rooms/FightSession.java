@@ -1,18 +1,14 @@
 package Game.Rooms;
 
-import Game.Entity.Entity;
-import Game.Entity.MONSTER_TYPE;
-import Game.Entity.Monster;
-import Game.Entity.Player;
-import Game.Game;
+import Game.Entity.*;
 import Game.Items.ITEM_TYPE;
-import Game.MESSAGES;
+import Game.*;
 
 import java.util.HashSet;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static Game.Game.*;
+import static Game.Game.readUserInput;
 
 public class FightSession extends Thread {
 
@@ -20,8 +16,6 @@ public class FightSession extends Thread {
     public Monster monster;
 
     public boolean isWin = true;
-
-    public final float playerSavedDexterity;
 
     public boolean continueFight = false;
 
@@ -31,9 +25,7 @@ public class FightSession extends Thread {
 
     public FightSession(Player player) {
         this.player = player;
-        playerSavedDexterity = player.getDexterity();
         this.monster = getRandomMonster(player.getLevel() - 1);
-        player.setDexterity(playerSavedDexterity * monster.playerDexterityChange);
     }
 
     @Override
@@ -42,7 +34,7 @@ public class FightSession extends Thread {
         while (isFighting) {
             printStats(player, monster);
             System.out.println("\n1. Начать бой\n2. Сбежать");
-            if (readUserInput(1, 2) == 1) { //---------------------------------
+            if (readUserInput(1, 2, 0) == 1) { //---------------------------------
                 Random rand = new Random();
 
                 isPlayerHit = rand.nextBoolean();
@@ -119,7 +111,7 @@ public class FightSession extends Thread {
             System.out.println("1. Продолжить бой");
             System.out.println("2. Выпить зелье и продолжить бой");
             System.out.println("3. Сбежать");
-            int input = readUserInput(1, 3);
+            int input = readUserInput(1, 3, 0);
             System.out.println("\n\n\n");
 
             switch (input) {
@@ -146,16 +138,13 @@ public class FightSession extends Thread {
     private void drinkPotion() {
         AtomicInteger f = new AtomicInteger(1);
         HashSet<ITEM_TYPE> itemSet = player.inventory.getAvailablePotions();
-        itemSet.forEach(item -> {
-            System.out.println(f.getAndIncrement() + ". " + item.ruName);
-        });
+        itemSet.forEach(item -> System.out.println(f.getAndIncrement() + ". " + item.ruName));
         System.out.println((itemSet.size() + 1) + ". Назад");
-        int input2 = readUserInput(1, itemSet.size() + 1);
+        int input2 = readUserInput(1, itemSet.size() + 1, 0);
         if (input2 == itemSet.size() + 1) {
             return;
         }
         player.usePotion((ITEM_TYPE) itemSet.toArray()[input2 - 1]);
-        return;
     }
 
     private int playerHit(Random rand) {
@@ -219,11 +208,11 @@ public class FightSession extends Thread {
         MONSTER_TYPE type = MONSTER_TYPE.values()[random.nextInt(0, 3)];
         return new Monster(
                 type.ruType,
-                type.hp + (type.hpPerLvl) * playerLevel + playerLevel + random.nextInt(-playerLevel - 1,playerLevel + 1),
-                type.strength + (type.strengthPerLvl) * playerLevel + random.nextInt(-playerLevel - 1,playerLevel + 1),
+                DataSupplier.HealthFunction.apply(playerLevel,type.healthFunc) + (type.health - 100),
+                DataSupplier.StrengthFunction.apply(playerLevel,type.strengthFunc) + (type.strength - 20),
                 type.dexterity,
                 type.playerDexterityChange,
-                type.exp + (type.expPerLvl + random.nextInt(-1, 2)) * playerLevel,
+                DataSupplier.ExpToDropFunction.apply(playerLevel,type.expConst),
                 type.dropItemType,
                 type.itemCount + random.nextInt(-1, 2),
                 playerLevel
@@ -232,7 +221,7 @@ public class FightSession extends Thread {
 
     private boolean isFindNextFight() {
         System.out.println("Теперь перед ним выбор\n1. Вернутся в город\n2. Найти нового противника\n3. Зайти к целительнице\n");
-        int input = readUserInput(1, 3);
+        int input = readUserInput(1, 3, 0);
 
         switch (input) {
             case 1 -> {
@@ -266,16 +255,16 @@ public class FightSession extends Thread {
         int border = 30;
         printHealths(player, monster);
         System.out.print("Сила      -  ");
-        printComparisonWithBorder(player.getStrength(), border, monster.getStrength());
+        TextWriter.printComparisonWithBorder(player.getStrength(), border, monster.getStrength());
         System.out.println();
     }
 
     private static void printHealths(Player player, Monster monster) {
         int border = 30;
         System.out.print("\nУчастник  -  ");
-        printComparisonWithBorder(player.playerName, border, monster.ruType);
+        TextWriter.printComparisonWithBorder(player.playerName, border, monster.ruType);
         System.out.print("\nЗдоровье  -  ");
-        printComparisonWithBorder(player.getHealth(), border, monster.getHealth());
+        TextWriter.printComparisonWithBorder(player.getHealth(), border, monster.getHealth());
         System.out.println();
     }
 }

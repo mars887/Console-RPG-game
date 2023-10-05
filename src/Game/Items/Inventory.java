@@ -1,16 +1,15 @@
 package Game.Items;
 
-import Game.Game;
 import Game.Entity.Player;
+import Game.TextWriter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
-import static Game.Game.printWithRightBorder;
+import static Game.TextWriter.printWithRightBorder;
 
 public class Inventory implements HasInventory {
     public static final int INVENTORY_SIZE = 7;                 // Inventory size
@@ -77,9 +76,11 @@ public class Inventory implements HasInventory {
         return items.stream();
     }
 
-    public HashMap<ITEM_TYPE, Integer> getHashMap() {
+    public HashMap<ITEM_TYPE, Integer> getHashMap(boolean countPotions) {
         HashMap<ITEM_TYPE, Integer> map = new HashMap<>();
         for (ItemStack item : items) {
+            if (!countPotions && item.itemType.isPotion) continue;
+
             if (map.containsKey(item.itemType)) {
                 map.put(item.itemType, map.get(item.itemType) + item.getQuantity());
             } else {
@@ -92,7 +93,7 @@ public class Inventory implements HasInventory {
     public HashSet<ITEM_TYPE> getAvailablePotions() {
         HashSet<ITEM_TYPE> set = new HashSet<>();
         for (ItemStack item : items) {
-            if(item.itemType.isPotion) {
+            if (item.itemType.isPotion) {
                 set.add(item.itemType);
             }
         }
@@ -108,23 +109,23 @@ public class Inventory implements HasInventory {
         Stream<ItemStack> list = player.inventory.getStream();
         AtomicInteger fullCost = new AtomicInteger();
 
-        list.peek(x -> fullCost.addAndGet(x.getQuantity() * x.itemType.costSell))
+        list.peek(x -> fullCost.addAndGet(x.itemType.isPotion ? 0 : x.getQuantity() * x.itemType.costSell))
                 .forEach(x -> {
-                    printWithRightBorder(String.valueOf(x.getQuantity()),4);
+                    printWithRightBorder(String.valueOf(x.getQuantity()), 4);
                     System.out.println(" | " + x.itemType.ruName);
                 });
-        Game.countPrint("     |\n", player.inventory.getFreeSlots());
+        TextWriter.countPrint("     |\n", player.inventory.getFreeSlots());
 
-        System.out.println("-------------------------------------------------" + " Общая стоимость - " + fullCost );
+        System.out.println("-------------------------------------------------" + " Общая стоимость - " + fullCost);
 
-        printWithRightBorder(String.valueOf(player.getMoney()),4);
+        printWithRightBorder(String.valueOf(player.getMoney()), 4);
         System.out.println(" | Монет имеется");
-        printWithRightBorder(String.valueOf(player.getLevel()),4);
+        printWithRightBorder(String.valueOf(player.getLevel()), 4);
         System.out.print(" | Уровень");
         System.out.print("       Опыт - " + player.getExp());
         System.out.println("       Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
-        printWithRightBorder(String.valueOf(player.getHealth()),4);
+        printWithRightBorder(String.valueOf(player.getHealth()), 4);
         System.out.println(" | Здоровье  (Max - " + player.getMaxHealth() + ")");
-        System.out.println("\n\n\n");
+        System.out.println("\n\n\n\n");
     }
 }

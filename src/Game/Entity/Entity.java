@@ -2,15 +2,15 @@ package Game.Entity;
 
 public abstract class Entity implements Fighter {
 
-    protected int maxHealth; // max health  x > 0
-    protected int health;          // health      x > 0 <= maxHealth
-    protected int strength;        // strength    x > 0
-    protected float dexterity;     // dexterity   0.0 > x < 1.0
-    protected int level;           // level       x >= 0
-    protected int exp;             // exp         x > 0
+    protected int maxHealth;        // max health  x > 0
+    protected int health;           // health      x > 0 <= maxHealth
+    protected int strength;         // strength    x > 0
+    protected Double dexterity;     // dexterity   0.0 > x < 1.0
+    protected int level;            // level       x >= 0
+    protected int exp;              // exp         x > 0
 
     // -------------------------------------------------------------------------------------    Constructors
-    public Entity(int maxHealth, int health, int strength, float dexterity, int exp) {
+    public Entity(int maxHealth, int health, int strength, double dexterity, int exp) {
         this.maxHealth = Math.max(maxHealth, 1);
         setHealth(health);
         setStrength(strength);
@@ -18,7 +18,7 @@ public abstract class Entity implements Fighter {
         setExp(exp);
     }
 
-    public Entity(int maxHealth, int strength, float dexterity, int exp) {
+    public Entity(int maxHealth, int strength, double dexterity, int exp) {
         this(maxHealth, maxHealth, strength, dexterity, exp);
     }
 
@@ -32,7 +32,7 @@ public abstract class Entity implements Fighter {
         this.strength = Math.max(strength, 1);
     }
 
-    public void setDexterity(float dexterity) {
+    public void setDexterity(double dexterity) {
         this.dexterity = Math.max(Math.min(dexterity, 1), 0);
     }
 
@@ -52,7 +52,7 @@ public abstract class Entity implements Fighter {
         return (strength);
     }
 
-    public float getDexterity() {
+    public double getDexterity() {
         return dexterity;
     }
 
