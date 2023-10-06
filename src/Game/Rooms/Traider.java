@@ -107,7 +107,7 @@ public class Traider extends Thread {
             int f = 1;
             for (Map.Entry<ITEM_TYPE, Integer> item : types.entrySet()) {
                 printWithRightBorder(f++ + ". " + item.getKey().ruName, 24);
-                printComparisonWithBorder("количество - " + item.getValue(), 36,"(" + item.getKey().costBuy * item.getValue() + " монет)");
+                printComparisonWithBorder("количество - " + item.getValue(), 36,"(" + item.getKey().costSell * item.getValue() + " монет)");
                 System.out.println();
             }
             System.out.println(f++ + ". Продать всё");

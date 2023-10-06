@@ -4,12 +4,14 @@ import Game.Entity.DataSupplier;
 import Game.Items.ITEM_TYPE;
 import Game.Items.Inventory;
 import Game.Entity.Player;
-import Game.Rooms.FightSession;
+import Game.Rooms.Fights.*;
 import Game.Rooms.Traider;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
+import static Game.Rooms.Fights.Fight.getRandomMonster;
 
 public class Game extends Thread {
 
@@ -19,7 +21,7 @@ public class Game extends Thread {
     public Player player;
 
     public Game() {
-        player = new Player(100, 100, 20, DataSupplier.DexterityFunction.apply(1,0.7f), 1, 0, 400);
+        player = new Player(100, 100, 20, DataSupplier.DexterityFunction.apply(1, 0.7f), 1, 0, 400);
         player.inventory.add(ITEM_TYPE.BONE, 137);
         player.inventory.add(ITEM_TYPE.HEALING_POTION_15HP, 2);
         player.inventory.add(ITEM_TYPE.FABRIC, 29);
@@ -40,13 +42,15 @@ public class Game extends Thread {
 
             switch (input) {    // cases
                 case 1:
-                    while(goToTraider()) {}
+                    while (goToTraider()) {
+                    }
                     break;
                 case 2:
-                    System.out.println(MESSAGES.MOB_RUSH_NOT_AVAILABLE);
+                    goToMobRush();
                     break;
                 case 3:
-                    while(goToForest()) {}
+                    while (goToForest()) {
+                    }
                     break;
                 case 4:
                     goToMedic();
@@ -58,6 +62,15 @@ public class Game extends Thread {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n--- ok ---\n\n\n\n\n\n\n\n\n");
                     gameEnded = true;
             }
+        }
+    }
+
+    private void goToMobRush() {
+        MobRush mobRush = new MobRush(player);
+        mobRush.start();
+        try {
+            mobRush.join();
+        } catch (InterruptedException e) {
         }
     }
 
@@ -74,14 +87,19 @@ public class Game extends Thread {
     }
 
     private boolean goToForest() {
-        FightSession fightSession = new FightSession(player);
+        FightSession fightSession = new FightSession(player, getRandomMonster(player.getLevel()));
         fightSession.start();
         try {
             fightSession.join();
         } catch (InterruptedException e) {
         }
-        if(fightSession.continueFight) return true;
-        if (!fightSession.isWin) player.restoreHp();
+        if (!fightSession.isWin) {
+            return false;
+        }
+        if (Fight.isFindNextFight(player)) {
+            System.out.println("Ищем нового противника...");
+            return true;
+        }
         return false;
     }
 
@@ -157,7 +175,7 @@ public class Game extends Thread {
                 System.out.print("это не число...\nПопробуй заново - ");
                 continue;
             }
-            if(extra == input) return extra;
+            if (extra == input) return extra;
             if (input >= a && input <= b) {
                 return input;
             } else {

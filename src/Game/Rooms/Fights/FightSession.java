@@ -1,4 +1,4 @@
-package Game.Rooms;
+package Game.Rooms.Fights;
 
 import Game.Entity.*;
 import Game.Items.ITEM_TYPE;
@@ -13,31 +13,35 @@ import static Game.Game.readUserInput;
 public class FightSession extends Thread {
 
     public final Player player;
-    public Monster monster;
+    public final Monster monster;
 
     public boolean isWin = true;
-
-    public boolean continueFight = false;
 
     private boolean isFighting = true; // 1 level
     private boolean isRunned = false;  // 2 level
     private boolean isPlayerHit;       // val 1
 
-    public FightSession(Player player) {
+    public boolean printStartStats = true;
+    public boolean giveDrop = true;
+    public boolean startQuestion = true;
+
+    public FightSession(Player player, Monster monster) {
         this.player = player;
-        this.monster = getRandomMonster(player.getLevel() - 1);
+        this.monster = monster;
     }
 
     @Override
     public void run() {
 
         while (isFighting) {
-            printStats(player, monster);
-            System.out.println("\n1. Начать бой\n2. Сбежать");
-            if (readUserInput(1, 2, 0) == 1) { //---------------------------------
-                Random rand = new Random();
+            if(printStartStats) Fight.printStats(player, monster);
+            if(startQuestion) System.out.println("\n1. Начать бой\n2. Сбежать");
 
+            if (!startQuestion || readUserInput(1, 2, 0) == 1) {
+
+                Random rand = new Random();
                 isPlayerHit = rand.nextBoolean();
+
                 System.out.println(MESSAGES.ENTERS_10);
                 System.out.println("Первый удар наносит " + (isPlayerHit ? player.playerName : monster.ruType) + "\n");
 
@@ -50,21 +54,13 @@ public class FightSession extends Thread {
                                 isPlayerHit = !isPlayerHit;
                             }
                             case 1 -> {
-                                printHealths(player, monster);
+                                Fight.printHealths(player, monster);
                                 System.out.println("\n\n\n");
                                 isPlayerHit = !isPlayerHit;
                             }
                             case 2 -> {
-                                winBattle(player, monster);
-                                isFighting = isFindNextFight();
-                                if (isFighting) {
-                                    System.out.println("Ищем нового противника...");
-                                    continueFight = true;
-                                    return;
-                                } else {
-                                    return;
-                                }
-
+                                if(giveDrop) giveDrop(player, monster);
+                                return;
                             }
                         }
 
@@ -76,7 +72,7 @@ public class FightSession extends Thread {
                                 isPlayerHit = !isPlayerHit;
                             }
                             case 1 -> {
-                                printHealths(player,monster);
+                                Fight.printHealths(player, monster);
                                 System.out.println("\n\n");
                                 if (afterMonsterHit(rand)) {
                                     isPlayerHit = !isPlayerHit;
@@ -89,11 +85,16 @@ public class FightSession extends Thread {
                                 isFighting = false;
                                 player.lostInventory();
                                 isWin = false;
+                                player.restoreHp();
                                 return;
                             }
                         }
                     }
-                }   //----------------------------------------------------------------
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                    }
+                }
 
                 isFighting = false;
             } else {
@@ -101,7 +102,8 @@ public class FightSession extends Thread {
                 System.out.println(player.playerName + " так бежал что из карманов всё повылетало...");
                 System.out.println(MESSAGES.ENTERS_5 + " \n\n");
                 player.lostInventory();
-                isFighting = false;
+                isWin = false;
+                return;
             }
         }
     }
@@ -138,10 +140,13 @@ public class FightSession extends Thread {
     private void drinkPotion() {
         AtomicInteger f = new AtomicInteger(1);
         HashSet<ITEM_TYPE> itemSet = player.inventory.getAvailablePotions();
+        if (itemSet.size() == 0) {
+            System.out.println("Нету больше зелий...");
+            return;
+        }
         itemSet.forEach(item -> System.out.println(f.getAndIncrement() + ". " + item.ruName));
-        System.out.println((itemSet.size() + 1) + ". Назад");
-        int input2 = readUserInput(1, itemSet.size() + 1, 0);
-        if (input2 == itemSet.size() + 1) {
+        int input2 = readUserInput(1, itemSet.size(), 0);
+        if (input2 == 0) {
             return;
         }
         player.usePotion((ITEM_TYPE) itemSet.toArray()[input2 - 1]);
@@ -197,74 +202,10 @@ public class FightSession extends Thread {
         }
     }
 
-    private void winBattle(Player player, Monster monster) {
+    private void giveDrop(Player player, Monster monster) {
         player.addExp(monster.getExp());
         player.inventory.add(monster.dropItemType, monster.itemCount);
         System.out.println("Вы получили:\n  Опыт - " + monster.getExp() + "\n  " + monster.dropItemType.ruName + " -  " + monster.itemCount + "\n\n\n");
     }
 
-    public static Monster getRandomMonster(int playerLevel) {
-        Random random = new Random();
-        MONSTER_TYPE type = MONSTER_TYPE.values()[random.nextInt(0, 3)];
-        return new Monster(
-                type.ruType,
-                DataSupplier.HealthFunction.apply(playerLevel,type.healthFunc) + (type.health - 100),
-                DataSupplier.StrengthFunction.apply(playerLevel,type.strengthFunc) + (type.strength - 20),
-                type.dexterity,
-                type.playerDexterityChange,
-                DataSupplier.ExpToDropFunction.apply(playerLevel,type.expConst),
-                type.dropItemType,
-                type.itemCount + random.nextInt(-1, 2),
-                playerLevel
-        );
-    }
-
-    private boolean isFindNextFight() {
-        System.out.println("Теперь перед ним выбор\n1. Вернутся в город\n2. Найти нового противника\n3. Зайти к целительнице\n");
-        int input = readUserInput(1, 3, 0);
-
-        switch (input) {
-            case 1 -> {
-                System.out.println(MESSAGES.ENTERS_10);
-                System.out.println("Возвращаемся в город...\n\n\n\n");
-                return false;
-            }
-            case 2 -> {
-                return true;
-            }
-            case 3 -> {
-                System.out.println(MESSAGES.ENTERS_10);
-                if (player.getMoney() >= 10) {
-                    Game.healPlayer(player);
-                } else if (player.getHealth() == player.getMaxHealth()) {
-                    System.out.println(MESSAGES.ENTERS_10);
-                    System.out.println(player.playerName + " полностью здоров");
-                    System.out.println(MESSAGES.ENTERS_5);
-                } else {
-                    System.out.println(MESSAGES.ENTERS_10);
-                    System.out.println("Недостаточно монет...");
-                    System.out.println(MESSAGES.ENTERS_5);
-                }
-                return isFindNextFight();
-            }
-        }
-        return false;
-    }
-
-    private static void printStats(Player player, Monster monster) {
-        int border = 30;
-        printHealths(player, monster);
-        System.out.print("Сила      -  ");
-        TextWriter.printComparisonWithBorder(player.getStrength(), border, monster.getStrength());
-        System.out.println();
-    }
-
-    private static void printHealths(Player player, Monster monster) {
-        int border = 30;
-        System.out.print("\nУчастник  -  ");
-        TextWriter.printComparisonWithBorder(player.playerName, border, monster.ruType);
-        System.out.print("\nЗдоровье  -  ");
-        TextWriter.printComparisonWithBorder(player.getHealth(), border, monster.getHealth());
-        System.out.println();
-    }
 }
