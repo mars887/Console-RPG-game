@@ -21,10 +21,8 @@ public class Game extends Thread {
     public Player player;
 
     public Game() {
-        player = new Player(100, 100, 20, DataSupplier.DexterityFunction.apply(1, 0.7f), 1, 0, 400);
-        player.inventory.add(ITEM_TYPE.BONE, 137);
-        player.inventory.add(ITEM_TYPE.HEALING_POTION_15HP, 2);
-        player.inventory.add(ITEM_TYPE.FABRIC, 29);
+        player = new Player(100, 100, 20, DataSupplier.DexterityFunction.apply(1, 0.7f), 1, 0, 2000);
+        player.inventory.add(ITEM_TYPE.HEALING_POTION_30PE, 3);
     }
 
     @Override

@@ -56,6 +56,7 @@ public class Player extends Entity {
         return dexterityPotionAvailable ? Math.sqrt(dexterity) : dexterity;
     }
 
+
     // -------------------------------------------------------------------------------------    Functions
 
     private void expToLevel(boolean print) {
@@ -80,11 +81,11 @@ public class Player extends Entity {
     }
 
 
-    public void lostInventory() {
+    public void lostInventory(float num) {
         HashMap<ITEM_TYPE, Integer> map = inventory.getHashMap(true);
         for (Map.Entry<ITEM_TYPE, Integer> entry : map.entrySet()) {
             if (entry.getValue() > 2) {
-                inventory.remove(entry.getKey(), (int) (entry.getValue() * new Random().nextFloat(0.2f, 0.4f)));
+                inventory.remove(entry.getKey(), (int) (entry.getValue() * new Random().nextFloat(num - 0.1f, num + 0.1f)));
             }
         }
     }
@@ -101,11 +102,22 @@ public class Player extends Entity {
                     }
                     dexterityPotionAvailable = false;
                 }).start();
-                System.out.println("Зелье будет действовать ещё 2 минуты");
+                System.out.println("Зелье точности будет действовать ещё 2 минуты");
             }
-            case HEALING_POTION_15HP ->
+            case PROTECTION_POTION -> {
+                new Thread(() -> {
+                    protection = 30;
+                    try {
+                        Thread.sleep(120000);
+                    } catch (InterruptedException e) {
+                    }
+                    protection = 0;
+                }).start();
+                System.out.println("Зелье защиты будет действовать ещё 2 минуты");
+            }
+            case HEALING_POTION_30PE ->
                     System.out.println("Терерь у " + playerName + " " + (health = Math.min(health + (int)(maxHealth * 0.30), maxHealth)) + " здоровья");
-            case HEALING_POTION_40HP ->
+            case HEALING_POTION_70PE ->
                     System.out.println("Терерь у " + playerName + " " + (health = Math.min(health + (int)(maxHealth * 0.70), maxHealth)) + " здоровья");
         }
         inventory.remove(item, 1);

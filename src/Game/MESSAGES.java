@@ -32,7 +32,8 @@ public abstract class MESSAGES {
             3. Хочу подзаработать""";
 
     public static final String TRAIDER_SELLING_LIST =
-            "\n 1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_15HP) +
-                    "\n 2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_40HP) +
-                    "\n 3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DEXTERITY_POTION);
+            "\n 1. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_30PE) +
+                    "\n 2. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.HEALING_POTION_70PE) +
+                    "\n 3. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.DEXTERITY_POTION) +
+                    "\n 4. " + ITEM_TYPE.getTradeMessage(ITEM_TYPE.PROTECTION_POTION);
 }

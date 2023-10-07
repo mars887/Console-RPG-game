@@ -57,7 +57,7 @@ public class Traider extends Thread {
             } else printTraiderText = true;
 
             System.out.println(MESSAGES.TRAIDER_SELLING_LIST);
-            int option = readUserInput(1, 3, 0);
+            int option = readUserInput(1, 4, 0);
             if(option == 0) return;
 
             ITEM_TYPE item = getItemById(option + 3);

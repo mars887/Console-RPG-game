@@ -5,7 +5,8 @@ public abstract class Entity implements Fighter {
     protected int maxHealth;        // max health  x > 0
     protected int health;           // health      x > 0 <= maxHealth
     protected int strength;         // strength    x > 0
-    protected Double dexterity;     // dexterity   0.0 > x < 1.0
+    protected int protection = 0;   // protection  0 <= x < 100 (int percent)
+    protected Double dexterity;     // dexterity   0.0 < x < 1.0
     protected int level;            // level       x >= 0
     protected int exp;              // exp         x > 0
 
@@ -40,6 +41,23 @@ public abstract class Entity implements Fighter {
         this.exp = Math.max(exp, 0);
     }
 
+    public void setProtection(int protection) {
+        this.protection = protection;
+    }
+
+    public boolean setDamage(int damage) {
+        damage = (int) (damage / 100.0 * (100 - protection));
+
+        if (health - damage >= 0) {
+            health -= damage;
+            return false;
+        } else return true;
+    }
+
+    public int getDamageWithProtection(int damage) {
+        return (int) (damage / 100.0 * (100 - protection));
+    }
+
     public int getMaxHealth() {
         return maxHealth;
     }
@@ -54,6 +72,10 @@ public abstract class Entity implements Fighter {
 
     public double getDexterity() {
         return dexterity;
+    }
+
+    public int getProtection() {
+        return protection;
     }
 
     public int getExp() {

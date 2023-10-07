@@ -43,7 +43,6 @@ public class MobRush extends Thread {
                     collectDropFrom(monster);
                     player.restoreHp();
                     level++;
-                    continue;
                 } else {
                     return;
                 }

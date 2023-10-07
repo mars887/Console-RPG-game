@@ -34,8 +34,8 @@ public class FightSession extends Thread {
     public void run() {
 
         while (isFighting) {
-            if(printStartStats) Fight.printStats(player, monster);
-            if(startQuestion) System.out.println("\n1. Начать бой\n2. Сбежать");
+            if (printStartStats) Fight.printStats(player, monster);
+            if (startQuestion) System.out.println("\n1. Начать бой\n2. Сбежать");
 
             if (!startQuestion || readUserInput(1, 2, 0) == 1) {
 
@@ -59,7 +59,7 @@ public class FightSession extends Thread {
                                 isPlayerHit = !isPlayerHit;
                             }
                             case 2 -> {
-                                if(giveDrop) giveDrop(player, monster);
+                                if (giveDrop) giveDrop(player, monster);
                                 return;
                             }
                         }
@@ -83,7 +83,7 @@ public class FightSession extends Thread {
                             case 2 -> {
                                 System.out.println(player.playerName + " не сумел устоять перед ударом но ему удалось скрыться\n\n\n\n\n\n\n\n");
                                 isFighting = false;
-                                player.lostInventory();
+                                player.lostInventory(0.3f);
                                 isWin = false;
                                 player.restoreHp();
                                 return;
@@ -101,7 +101,7 @@ public class FightSession extends Thread {
                 System.out.println(MESSAGES.ENTERS_10);
                 System.out.println(player.playerName + " так бежал что из карманов всё повылетало...");
                 System.out.println(MESSAGES.ENTERS_5 + " \n\n");
-                player.lostInventory();
+                player.lostInventory(0.2f);
                 isWin = false;
                 return;
             }
@@ -127,7 +127,7 @@ public class FightSession extends Thread {
                 }
                 case 3 -> {
                     System.out.println(player.playerName + " решил сбежать, но может это и к лучшему...");
-                    player.lostInventory();
+                    player.lostInventory(0.15f);
                     isFighting = false;
                     isWin = false;
                     isRunned = true;
@@ -194,11 +194,12 @@ public class FightSession extends Thread {
 
     protected int[] makeHit(Entity defender, Entity attacker, Random random) {
         int[] damage = attacker.attack(random, attacker);
-        if (defender.getHealth() <= damage[0]) {
-            return new int[]{damage[0] == 0 ? 0 : 1, damage[0], damage[1], 1};
+        int dmg = defender.getDamageWithProtection(damage[0]);
+
+        if (defender.setDamage(damage[0])) {
+            return new int[]{dmg == 0 ? 0 : 1, dmg, damage[1], 1};
         } else {
-            defender.setHealth(defender.getHealth() - damage[0]);
-            return new int[]{damage[0] == 0 ? 0 : 1, damage[0], damage[1], 0};
+            return new int[]{dmg == 0 ? 0 : 1, dmg, damage[1], 0};
         }
     }
 
