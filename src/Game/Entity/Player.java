@@ -63,10 +63,11 @@ public class Player extends Entity {
         while (exp > 0) {
             if (DataSupplier.ExpToNextLevelFunction.apply(level,1) <= exp) {
                 exp -= DataSupplier.ExpToNextLevelFunction.apply(level,1);
-                maxHealth = DataSupplier.HealthFunction.apply(level,12);
+                maxHealth = DataSupplier.HealthFunction.apply(level,13);
                 strength = DataSupplier.StrengthFunction.apply(level,4);
                 dexterity = DataSupplier.DexterityFunction.apply(level,0.7f);
                 if (print) System.out.println("Level Up to " + ++level + " !");
+                if(level % 10 == 0 && inventory.addInventorySlot()) System.out.println("Доступен новый слот ивентаря");
             } else {
                 return;
             }

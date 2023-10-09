@@ -3,9 +3,9 @@ package Game.Entity;
 import Game.Items.ITEM_TYPE;
 
 public enum MONSTER_TYPE {
-    ZOMBIE("зомби", 100, 10, 0.75f, 1, ITEM_TYPE.FABRIC, 8, 1, 20, 4),
-    SKELETON("скелет", 70, 10, 0.9f, 0.9f, ITEM_TYPE.BONE, 8, 1.2f, 25, 4),
-    GOBLIN("гоблин", 120, 10, 0.8f, 0.95f, ITEM_TYPE.DIAMOND, 3, 1.5f, 30, 4);
+    ZOMBIE("зомби", 100, 13, 0.75f, 1, ITEM_TYPE.FABRIC, 8, 1, 20, 3),
+    SKELETON("скелет", 70, 11, 0.9f, 0.9f, ITEM_TYPE.BONE, 8, 1.2f, 25, 4),
+    GOBLIN("гоблин", 120, 10, 0.8f, 0.95f, ITEM_TYPE.DIAMOND, 3, 1.5f, 30, 5);
 
     public final String ruType;               // russian name
     public final int health;                  // preFunction health

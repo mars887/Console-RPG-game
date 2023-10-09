@@ -48,7 +48,7 @@ public abstract class Entity implements Fighter {
     public boolean setDamage(int damage) {
         damage = (int) (damage / 100.0 * (100 - protection));
 
-        if (health - damage >= 0) {
+        if (health - damage > 0) {
             health -= damage;
             return false;
         } else return true;

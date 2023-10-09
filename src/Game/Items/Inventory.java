@@ -9,10 +9,11 @@ import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static Game.TextWriter.countPrint;
 import static Game.TextWriter.printWithRightBorder;
 
 public class Inventory implements HasInventory {
-    public static final int INVENTORY_SIZE = 7;                 // Inventory size
+    public static int INVENTORY_SIZE = 7;                 // Inventory size
     private ArrayList<ItemStack> items = new ArrayList<>();     // List of items in inventory
 
     @Override
@@ -104,6 +105,14 @@ public class Inventory implements HasInventory {
         return INVENTORY_SIZE - items.size();
     }
 
+    public boolean addInventorySlot() {
+        if(INVENTORY_SIZE < 10) {
+            INVENTORY_SIZE++;
+            return true;
+        }
+        return false;
+    }
+
     public static void printInventory(Player player) {
         System.out.println("В инвентаре " + player.playerName + " нашёл следующее...");
         Stream<ItemStack> list = player.inventory.getStream();
@@ -126,6 +135,6 @@ public class Inventory implements HasInventory {
         System.out.println("       Нужно опыта до следующего уровня - " + player.getXpForNextLevel());
         printWithRightBorder(String.valueOf(player.getHealth()), 4);
         System.out.println(" | Здоровье  (Max - " + player.getMaxHealth() + ")");
-        System.out.println("\n\n\n\n");
+        countPrint("\n",12 - INVENTORY_SIZE);
     }
 }

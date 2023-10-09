@@ -3,7 +3,7 @@ package Game.Items;
 public enum ITEM_TYPE {
     BONE("кость", 5, 10, 64,false),
     FABRIC("ткань", 6, 14, 64,false),
-    DIAMOND("алмаз", 0, 90, 16,false),
+    DIAMOND("алмаз", 40, 90, 16,false),
     HEALING_POTION_30PE("зелье востановления +30%", 30, 50, 5,true),
     HEALING_POTION_70PE("зелье востановления +70%", 40, 90, 3,true),
     DEXTERITY_POTION("зелье ловкости", 35, 60, 3,true),
